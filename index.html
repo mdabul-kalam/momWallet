@@ -24,7 +24,16 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hind Siliguri",
 .wrap{max-width:520px;margin:0 auto;padding:12px 16px 150px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 12px}
 .topbar h1{font-size:20px;line-height:1.2;margin:0;font-weight:700}
-.settingsBtn{width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:inherit;font-size:22px;display:grid;place-items:center;cursor:pointer}
+.settingsBtn{width:54px;height:54px;border:0;border-radius:50%;background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.settingsBtn svg{width:27px;height:27px;display:block}
+.drawerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.34);z-index:29;opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s ease}
+.drawerOverlay.on{opacity:1;visibility:visible}
+.settingsDrawer{position:fixed;z-index:30;top:0;right:0;width:min(88vw,380px);height:100dvh;height:100vh;background:var(--card);color:var(--ink);padding:calc(22px + env(safe-area-inset-top,0px)) 18px calc(22px + env(safe-area-inset-bottom,0px));overflow-y:auto;box-shadow:-12px 0 36px rgba(0,0,0,.14);transform:translateX(105%);opacity:.65;transition:transform .34s cubic-bezier(.2,.75,.25,1),opacity .34s ease;border-radius:22px 0 0 22px}
+.settingsDrawer.on{transform:translateX(0);opacity:1}
+.drawerHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.drawerHead h3{font-size:21px;margin:0}
+.drawerClose{width:40px;height:40px;border:0;border-radius:50%;background:var(--soft);color:var(--ink);font-size:24px;cursor:pointer}
+.drawerHint{color:var(--muted);font-size:14px;margin:0 0 16px}
 .settings-section{border:1px solid var(--line);border-radius:14px;padding:12px;margin:12px 0}
 .settings-section h4{margin:0 0 8px;font-size:16px}
 .settings-section p{margin:0 0 10px;color:var(--muted);font-size:14px}
@@ -110,7 +119,7 @@ li.done .nm b{text-decoration:line-through;text-decoration-thickness:2px;color:v
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar"><h1>বাজারের হিসাব</h1><button class="settingsBtn" id="settingsBtn" type="button" aria-label="সেটিংস" title="সেটিংস">⚙</button></div>
+  <div class="topbar"><h1>বাজারের হিসাব</h1><button class="settingsBtn" id="settingsBtn" type="button" aria-label="মেনু ও সেটিংস" title="মেনু ও সেটিংস"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div>
   <div class="bal" id="bal">
     <small>হাতে আছে</small>
     <div class="big" id="rem">৳ ০</div>
@@ -145,6 +154,8 @@ li.done .nm b{text-decoration:line-through;text-decoration-thickness:2px;color:v
 <div class="toast" id="toast" role="status"></div>
 <div class="toast" id="hint" role="status"></div>
 <div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+<div class="drawerOverlay" id="drawerOverlay"></div>
+<aside class="settingsDrawer" id="settingsDrawer" aria-hidden="true"><div class="drawerHead"><h3>সেটিংস</h3><button class="drawerClose" id="drawerClose" type="button" aria-label="বন্ধ করুন">×</button></div><p class="drawerHint">অ্যাকাউন্ট ও অ্যাপের পছন্দ পরিবর্তন করুন।</p><div class="settings-section"><h4>Google Account</h4><p>Google Drive-এ আপনার বাজারের হিসাব ব্যাকআপ ও সিঙ্ক করুন।</p><div id="accountSlot"></div></div><div class="settings-section"><h4>ডার্ক মোড</h4><p>System settings নির্বাচন করলে ফোন বা কম্পিউটারের থিম অনুসরণ করবে।</p><select id="themeMode"><option value="system">System settings অনুযায়ী</option><option value="light">Light mode</option><option value="dark">Dark mode</option></select></div></aside>
 
 <!-- Google Identity Services + Google Drive API (no Firebase) -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -347,20 +358,21 @@ li.done .nm b{text-decoration:line-through;text-decoration-thickness:2px;color:v
     $('sheet').innerHTML=html;$('ov').classList.add('on');if(onOpen)onOpen()
   }
   function close(){$('ov').classList.remove('on')}
-  var deferredInstallPrompt=null;
-  function updateInstallUI(){var b=$('installAppBtn'),m=$('installAppNote');if(!b||!m)return;var standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='অ্যাপ ইনস্টল করা আছে';b.disabled=true;m.textContent='আপনি অ্যাপ হিসেবে ব্যবহার করছেন।'}else if(deferredInstallPrompt){b.textContent='অ্যাপ ইনস্টল করুন';b.disabled=false;m.textContent='Chrome-এর মাধ্যমে ফোনে অ্যাপটি ইনস্টল করুন।'}else{b.textContent='ইনস্টল অপশন দেখুন';b.disabled=true;m.textContent='Chrome মেনু (⋮) থেকে “Install app” বা “Add to Home screen” নির্বাচন করুন।'} }
-  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});
-  window.addEventListener('appinstalled',function(){deferredInstallPrompt=null;updateInstallUI()});
-  $('settingsBtn').onclick=function(){
-    sheet('<h3>সেটিংস</h3><p>অ্যাকাউন্ট ও অ্যাপের পছন্দ পরিবর্তন করুন।</p><div class="settings-section"><h4>Google Account</h4><p>Google Drive-এ আপনার বাজারের হিসাব ব্যাকআপ ও সিঙ্ক করুন।</p><div id="accountSlot"></div></div><div class="settings-section"><h4>ডার্ক মোড</h4><p>System settings নির্বাচন করলে ফোন বা কম্পিউটারের থিম অনুসরণ করবে।</p><select id="themeMode"><option value="system">System settings অনুযায়ী</option><option value="light">Light mode</option><option value="dark">Dark mode</option></select></div><div class="settings-section"><h4>অ্যাপ ইনস্টল</h4><p id="installAppNote">Chrome থেকে এই অ্যাপটি ফোনে ইনস্টল করুন।</p><button id="installAppBtn" type="button" style="width:100%;font:inherit;font-weight:600;border:0;border-radius:12px;padding:12px;background:var(--green);color:var(--on-green)">অ্যাপ ইনস্টল করুন</button></div><div class="btns"><button class="ok" id="settingsClose">বন্ধ করুন</button></div>',function(){
-      $('accountSlot').appendChild($('accountBox'));
-      $('themeMode').value=(function(){try{return localStorage.getItem(THEME_KEY)||'system'}catch(e){return 'system'}})();
-      $('themeMode').onchange=function(){applyTheme(this.value)};
-      $('settingsClose').onclick=close;
-      updateInstallUI();
-      $('installAppBtn').onclick=async function(){if(!deferredInstallPrompt)return;deferredInstallPrompt.prompt();try{await deferredInstallPrompt.userChoice}catch(e){}deferredInstallPrompt=null;updateInstallUI()};
-    });
-  };
+  function closeDrawer(){
+    $('settingsDrawer').classList.remove('on');$('drawerOverlay').classList.remove('on');$('settingsDrawer').setAttribute('aria-hidden','true');
+    if($('accountBox')&&$('accountSlot').contains($('accountBox'))) $('settingsHome').appendChild($('accountBox'));
+  }
+  function openDrawer(){
+    if($('ov').classList.contains('on'))close();
+    $('accountSlot').appendChild($('accountBox'));
+    $('themeMode').value=(function(){try{return localStorage.getItem(THEME_KEY)||'system'}catch(e){return 'system'}})();
+    $('themeMode').onchange=function(){applyTheme(this.value)};
+    $('drawerOverlay').classList.add('on');$('settingsDrawer').classList.add('on');$('settingsDrawer').setAttribute('aria-hidden','false');
+  }
+  $('settingsBtn').onclick=openDrawer;
+  $('drawerClose').onclick=closeDrawer;
+  $('drawerOverlay').onclick=closeDrawer;
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});
   $('ov').addEventListener('click',function(e){if(e.target===this)close()});
 
   function ask(title,sub,init,cb){
@@ -477,7 +489,7 @@ li.done .nm b{text-decoration:line-through;text-decoration-thickness:2px;color:v
     try{history.pushState({g:1},'')}catch(e){}
   });
 
-  if(!S.balance&&!S.items.length){setTimeout(function(){$('editBal').click()},300)}
+  // ব্যালেন্স না থাকলেও অ্যাপ চালুর সময় স্বয়ংক্রিয়ভাবে টাকা জানতে চাইবে না।
 })();
 </script>
 </body>
