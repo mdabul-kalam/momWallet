@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F5D3A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="বাজারের হিসাব">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>বাজারের হিসাব</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF3EC;--card:#FFFFFF;--ink:#1D2A21;--muted:#66756B;--line:#D9E3D8;--green:#1F5D3A;--on-green:#F4FAF2;--gold:#E8B923;--red:#C8372D;--soft:#E3EDE1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121A15;--card:#1B261F;--ink:#E7F0E6;--muted:#93A598;--line:#2C3B31;--green:#2F7A4E;--on-green:#F4FAF2;--gold:#EAC24A;--red:#F0766D;--soft:#243229}}
+:root[data-theme="dark"]{--bg:#121A15;--card:#1B261F;--ink:#E7F0E6;--muted:#93A598;--line:#2C3B31;--green:#2F7A4E;--on-green:#F4FAF2;--gold:#EAC24A;--red:#F0766D;--soft:#243229}
+:root[data-theme="light"]{--bg:#EEF3EC;--card:#FFFFFF;--ink:#1D2A21;--muted:#66756B;--line:#D9E3D8;--green:#1F5D3A;--on-green:#F4FAF2;--gold:#E8B923;--red:#C8372D;--soft:#E3EDE1}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hind Siliguri","Noto Sans Bengali","Kalpurush",system-ui,sans-serif;font-size:17px;line-height:1.5;min-height:100vh}
+.wrap{max-width:520px;margin:0 auto;padding:12px 16px 150px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 12px}
+.topbar h1{font-size:20px;line-height:1.2;margin:0;font-weight:700}
+.settingsBtn{width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--ink);font:inherit;font-size:22px;display:grid;place-items:center;cursor:pointer}
+.settings-section{border:1px solid var(--line);border-radius:14px;padding:12px;margin:12px 0}
+.settings-section h4{margin:0 0 8px;font-size:16px}
+.settings-section p{margin:0 0 10px;color:var(--muted);font-size:14px}
+.settings-section select{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.bal{background:var(--green);color:var(--on-green);border-radius:20px;padding:20px 20px 16px}
+.bal small{opacity:.8;font-size:15px}
+.bal .big{font-size:46px;font-weight:700;line-height:1.15;margin:2px 0 6px}
+.bal.neg{background:var(--red)}
+.bal .row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:15px;opacity:.95}
+.bal button{background:rgba(255,255,255,.18);color:inherit;border:0;border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
+.bar{height:8px;background:rgba(255,255,255,.25);border-radius:99px;margin:12px 0 8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .3s}
+.add{display:flex;gap:8px;margin:16px 0 8px}
+.add input{font:inherit;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px 14px;min-width:0}
+.add .n{flex:1}.add .q{width:84px}
+.add button{font:inherit;font-weight:600;background:var(--gold);color:#2A2200;border:0;border-radius:14px;padding:0 18px;cursor:pointer}
+input:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.head{display:flex;justify-content:space-between;color:var(--muted);font-size:15px;margin:14px 4px 6px}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 10px 10px 12px;margin-bottom:8px}
+.tick{flex:none;width:32px;height:32px;border-radius:50%;border:2px solid var(--green);background:transparent;color:transparent;font-size:18px;cursor:pointer;display:grid;place-items:center;padding:0}
+li.done .tick{background:var(--green);color:var(--on-green)}
+.nm{flex:1;min-width:0;word-break:break-word}
+.nm span{display:block;font-size:13px;color:var(--muted);line-height:1.2}
+li.done .nm b{text-decoration:line-through;text-decoration-thickness:2px;color:var(--muted);font-weight:500}
+.nm b{font-weight:600}
+.price{flex:none;font-weight:700;color:var(--green);background:var(--soft);border:0;border-radius:10px;padding:4px 10px;font:inherit;font-weight:700;cursor:pointer}
+.del{flex:none;border:0;background:transparent;color:var(--muted);font-size:22px;width:36px;height:36px;border-radius:10px;cursor:pointer}
+.del:hover{color:var(--red)}
+.sw{position:relative;border-radius:16px;margin-bottom:8px;overflow:hidden}
+.sw li{margin-bottom:0;touch-action:pan-y;position:relative;user-select:none;-webkit-user-select:none}
+.swh{position:absolute;right:20px;top:50%;transform:translateY(-50%);color:#fff;font-weight:700}
+.swi{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:140px;color:var(--on-green);line-height:1.3}
+.swi b{display:block;font-size:16px}
+.swi span{display:block;font-size:13px}
+.swd{position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--on-green);font-weight:700;display:none}
+.sw.full .swd{display:block}
+.sw.full .swi{display:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:15;display:none;align-items:center;justify-content:space-between;gap:14px;background:#223027;color:#F1F7F0;padding:10px 12px 10px 16px;border-radius:14px;width:calc(100% - 32px);max-width:488px;font-size:15px}
+.toast button{background:none;border:0;color:#EAC24A;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
+.empty{text-align:center;color:var(--muted);padding:34px 10px;border:1.5px dashed var(--line);border-radius:16px}
+.foot{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+.foot .in{max-width:520px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.foot .t{flex:1}.foot .t small{color:var(--muted);display:block;font-size:14px;line-height:1.2}
+.foot .t b{font-size:26px;line-height:1.2}
+.foot button{font:inherit;font-weight:600;background:var(--green);color:var(--on-green);border:0;border-radius:14px;padding:12px 18px;cursor:pointer}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.ov.on{display:flex}
+.sheet{background:var(--card);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.sheet h3{margin:0 0 4px;font-size:20px}.sheet p{margin:0 0 12px;color:var(--muted);font-size:15px}
+.sheet input,.sheet textarea{width:100%;font:inherit;font-size:24px;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:12px 14px}
+.sheet textarea{font-size:15px;height:260px;resize:none}
+.btns{display:flex;gap:8px;margin-top:14px}
+.btns button{flex:1;font:inherit;font-weight:600;border:0;border-radius:14px;padding:13px;cursor:pointer;background:var(--soft);color:var(--ink)}
+.btns .ok{background:var(--green);color:var(--on-green)}
+.tools{display:flex;justify-content:center;gap:18px;margin-top:18px}
+.sheet{max-height:88vh;overflow-y:auto}
+.tabs{display:flex;gap:8px;margin:10px 0 12px}
+.tabs button{flex:1;font:inherit;font-weight:600;font-size:14px;border:0;border-radius:12px;padding:10px 6px;background:var(--soft);color:var(--ink);cursor:pointer}
+.tabs button.on{background:var(--green);color:var(--on-green)}
+.hc{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;background:var(--bg)}
+.hc summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;font-weight:600;list-style:none}
+.hc summary::-webkit-details-marker{display:none}
+.hc summary small{display:block;color:var(--muted);font-weight:400;font-size:13px;line-height:1.2}
+.hc .nx{font-weight:600}
+.hc .ln{display:flex;justify-content:space-between;gap:8px;font-size:15px;padding:4px 0;border-top:1px dashed var(--line);margin-top:4px}
+.hc .ln.nb{color:var(--muted)}
+.hc .sm{margin-top:6px;font-size:14px;color:var(--muted)}
+.hc .rs{margin-top:8px;font:inherit;font-size:14px;font-weight:600;border:0;border-radius:10px;padding:6px 12px;background:var(--soft);color:var(--ink);cursor:pointer}
+.hempty{text-align:center;color:var(--muted);padding:24px 8px}
+#hint{justify-content:center}
+.tools button{background:none;border:0;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer}
+
+.account{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin:12px 0 14px}
+.account .ainfo{flex:1;min-width:0}
+.account .ainfo b{display:block;font-size:16px}
+.account .ainfo small{display:block;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.account button{font:inherit;font-size:14px;font-weight:600;border:0;border-radius:11px;padding:9px 12px;background:var(--green);color:var(--on-green);cursor:pointer;white-space:nowrap}
+.account button.secondary{background:var(--soft);color:var(--ink)}
+.account .gmark{width:30px;height:30px;flex:none;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-weight:700;color:#4285F4;background:#fff}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><h1>বাজারের হিসাব</h1><button class="settingsBtn" id="settingsBtn" type="button" aria-label="সেটিংস" title="সেটিংস">⚙</button></div>
+  <div class="bal" id="bal">
+    <small>হাতে আছে</small>
+    <div class="big" id="rem">৳ ০</div>
+    <div class="bar"><i id="barfill" style="width:0"></i></div>
+    <div class="row"><span id="balnote"></span><button id="editBal">টাকা বদলান</button></div>
+  </div>
+
+  <div id="settingsHome" hidden>
+    <div class="account" id="accountBox">
+      <div class="gmark">G</div>
+      <div class="ainfo"><b id="accountTitle">Google Account</b><small id="accountStatus">অ্যাকাউন্ট যুক্ত করলে ডেটা ক্লাউডে সিঙ্ক হবে</small></div>
+      <button id="googleBtn" type="button">Connect</button>
+    </div>
+  </div>
+
+  <form class="add" id="addForm" autocomplete="off">
+    <input class="n" id="name" placeholder="কী কিনতে হবে? যেমন: আলু" autocomplete="off" enterkeyhint="send">
+    <button id="addBtn" type="submit">যোগ</button>
+  </form>
+
+  <div class="head"><span id="count"></span><span id="pending"></span></div>
+  <ul id="list"></ul>
+
+  <div class="tools"><button id="histBtn">ইতিহাস</button><button id="newTrip">নতুন বাজার শুরু</button></div>
+</div>
+
+<div class="foot"><div class="in">
+  <div class="t"><small>মোট খরচ</small><b id="spent">৳ ০</b></div>
+  <button id="sumBtn">মাকে হিসাব দিন</button>
+</div></div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="toast" id="hint" role="status"></div>
+<div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+
+<!-- Google Identity Services + Google Drive API (no Firebase) -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+(function(){
+  var KEY='bazar-hisab-v1';
+  var S={balance:0,items:[]};
+  try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&Array.isArray(p.items)){S=p}}}catch(e){}
+  S.hist=Array.isArray(S.hist)?S.hist:[];S.del=Array.isArray(S.del)?S.del:[];
+  var accessToken=null,tokenClient=null,driveFileId=null,cloudReady=false,cloudTimer=null,syncBusy=false,lastCloudJSON='';
+  var $=function(id){return document.getElementById(id)};
+  var THEME_KEY='bazar-hisab-theme';
+  function applyTheme(mode){
+    if(mode==='system'||!mode){document.documentElement.removeAttribute('data-theme');mode='system'}
+    else{document.documentElement.setAttribute('data-theme',mode)}
+    try{localStorage.setItem(THEME_KEY,mode)}catch(e){}
+    var picker=$('themeMode');if(picker)picker.value=mode;
+  }
+  var savedTheme='system';try{savedTheme=localStorage.getItem(THEME_KEY)||'system'}catch(e){}
+  applyTheme(savedTheme);
+  // Google Cloud Console থেকে OAuth 2.0 Web client ID বসান।
+  var GOOGLE_CLIENT_ID='439242245616-s1ne8umcmc1nnqdfhnj697av12qkdp33.apps.googleusercontent.com';
+  function googleConfigured(){return GOOGLE_CLIENT_ID!=='YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com'&&/\.apps\.googleusercontent\.com$/.test(GOOGLE_CLIENT_ID)}
+  function accountUI(email,name,status){
+    $('accountTitle').textContent=name||'Google Account';
+    $('accountStatus').textContent=status|| (email?email+' • Google Drive':'Google Drive-এ ব্যাকআপ রাখতে যুক্ত করুন');
+    $('googleBtn').textContent=accessToken?'Disconnect':'Google Drive যুক্ত করুন';
+    $('googleBtn').className=accessToken?'secondary':'';
+  }
+  function mergeRecords(local,cloud){
+    var out=JSON.parse(JSON.stringify(cloud||{balance:0,items:[],hist:[],del:[]}));
+    local=local||{balance:0,items:[],hist:[],del:[]};
+    function mergeBy(a,b,keyFn){var map=new Map();(a||[]).forEach(function(x){map.set(String(keyFn(x)),x)});(b||[]).forEach(function(x){map.set(String(keyFn(x)),x)});return Array.from(map.values())}
+    out.items=mergeBy(out.items,local.items,function(x){return x.id});
+    out.hist=mergeBy(out.hist,local.hist,function(x){return x.id});
+    out.del=mergeBy(out.del,local.del,function(x){return (x.it&&x.it.id)||x.ts});
+    if(local.balance!==0||local.items.length||local.hist.length)out.balance=local.balance;
+    out.hist=(out.hist||[]).sort(function(a,b){return (b.ts||0)-(a.ts||0)});
+    out.del=(out.del||[]).sort(function(a,b){return (b.ts||0)-(a.ts||0)}).slice(0,300);
+    return out;
+  }
+  function driveRequest(url,options){
+    options=options||{};options.headers=Object.assign({},options.headers||{},{Authorization:'Bearer '+accessToken});
+    return fetch(url,options).then(async function(r){if(!r.ok){var t=await r.text();throw new Error('Google Drive error ('+r.status+'): '+t.slice(0,220))}return r.status===204?null:r.json()});
+  }
+  async function findBackup(){
+    var q="name='bazar-hisab-backup.json' and 'appDataFolder' in parents and trashed=false";
+    var data=await driveRequest('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id,name,modifiedTime)&q='+encodeURIComponent(q));
+    return data.files&&data.files.length?data.files[0]:null;
+  }
+  async function readBackup(file){
+    var r=await fetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(file.id)+'?alt=media',{headers:{Authorization:'Bearer '+accessToken}});
+    if(!r.ok)throw new Error('Drive backup পড়া যায়নি ('+r.status+')');
+    return r.json();
+  }
+  async function writeBackup(){
+    var body=JSON.stringify(S);var boundary='-------bazarDriveBoundary'+Date.now();
+    var metadata=driveFileId?{name:'bazar-hisab-backup.json'}:{name:'bazar-hisab-backup.json',mimeType:'application/json',parents:['appDataFolder']};
+    var multipart='--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(metadata)+'\r\n--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+body+'\r\n--'+boundary+'--';
+    var url=driveFileId?'https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(driveFileId)+'?uploadType=multipart&fields=id':'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id';
+    var result=await driveRequest(url,{method:driveFileId?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+boundary},body:multipart});
+    if(result&&result.id)driveFileId=result.id;
+    lastCloudJSON=body;
+    accountUI(null,null,'Google Drive-এ সিঙ্ক হয়েছে • '+new Date().toLocaleTimeString('bn-BD'));
+  }
+  async function syncNow(){
+    if(!accessToken||syncBusy)return;syncBusy=true;
+    try{
+      accountUI(null,null,'Google Drive-এর সঙ্গে সিঙ্ক হচ্ছে…');
+      var file=await findBackup();
+      if(file){driveFileId=file.id;var cloud=await readBackup(file);var merged=mergeRecords(S,cloud);S=merged;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();}
+      else{driveFileId=null}
+      cloudReady=true;await writeBackup();
+    }catch(e){cloudReady=false;accountUI(null,null,'সিঙ্ক সমস্যা: '+e.message);}
+    finally{syncBusy=false;}
+  }
+  function save(){
+    try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+    if(accessToken&&cloudReady){clearTimeout(cloudTimer);cloudTimer=setTimeout(function(){writeBackup().catch(function(e){accountUI(null,null,'ব্যাকআপ হয়নি: '+e.message)})},700)}
+  }
+  function requestGoogleAccess(){
+    if(!googleConfigured()){alert('Google Cloud Console থেকে OAuth Client ID তৈরি করে HTML ফাইলে GOOGLE_CLIENT_ID বসাতে হবে।');return}
+    if(!window.google||!google.accounts||!google.accounts.oauth2){alert('Google Sign-In লোড হয়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।');return}
+    if(!tokenClient){tokenClient=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',callback:async function(resp){
+      if(resp.error){accountUI(null,null,'Google সংযোগ হয়নি: '+resp.error);return}
+      accessToken=resp.access_token;
+      try{var u=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+accessToken}});var profile=u.ok?await u.json():{};accountUI(profile.email,profile.name,'Google Drive-এর সঙ্গে সংযোগ হচ্ছে…');await syncNow();}
+      catch(e){accountUI(null,null,'Google Drive সংযোগ হয়নি: '+e.message)}
+    }});}
+    tokenClient.requestAccessToken({prompt:accessToken?'':'consent'});
+  }
+  $('googleBtn').onclick=function(){
+    if(accessToken){if(!confirm('Google Drive থেকে Disconnect করবেন? Drive-এ থাকা ব্যাকআপ ও এই ডিভাইসের ডেটা মুছবে না।'))return;accessToken=null;driveFileId=null;cloudReady=false;clearTimeout(cloudTimer);accountUI(null,null,'সংযোগ বিচ্ছিন্ন • ডেটা এই ডিভাইসে আছে');return;}
+    requestGoogleAccess();
+  };
+  window.addEventListener('focus',function(){if(accessToken&&cloudReady)syncNow()});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&accessToken&&cloudReady)syncNow()});
+  accountUI(null,null,googleConfigured()?'Google Drive-এ ব্যাকআপ রাখতে যুক্ত করুন':'Google OAuth Client ID বসানো বাকি');
+  function bn(n){return Number(n).toLocaleString('bn-BD',{maximumFractionDigits:2})}
+  function money(n){return '৳ '+bn(n)}
+  function parse(s){
+    var m={'০':0,'১':1,'২':2,'৩':3,'৪':4,'৫':5,'৬':6,'৭':7,'৮':8,'৯':9};
+    s=String(s).replace(/[০-৯]/g,function(c){return m[c]}).replace(/[^0-9.]/g,'');
+    var v=parseFloat(s);return isNaN(v)?null:v;
+  }
+  function spent(){return S.items.reduce(function(a,i){return a+(i.done&&i.price?i.price:0)},0)}
+
+  function render(){
+    var sp=spent(),rem=S.balance-sp;
+    $('rem').textContent=(rem<0?'−':'')+money(Math.abs(rem));
+    $('bal').className='bal'+(rem<0?' neg':'');
+    $('balnote').textContent=rem<0?'বাজেটের চেয়ে '+money(-rem)+' বেশি খরচ!':'মায়ের দেওয়া: '+money(S.balance);
+    $('barfill').style.width=(S.balance>0?Math.min(100,sp/S.balance*100):0)+'%';
+    $('spent').textContent=money(sp);
+    var done=S.items.filter(function(i){return i.done}).length;
+    $('count').textContent=S.items.length?bn(done)+'/'+bn(S.items.length)+' টি কেনা হয়েছে':'';
+    $('pending').textContent='';
+    var ul=$('list');ul.innerHTML='';
+    if(!S.items.length){
+      var e=document.createElement('div');e.className='empty';e.textContent='লিস্ট খালি। উপরে জিনিসের নাম লিখে “যোগ” চাপুন।';ul.appendChild(e);return;
+    }
+    S.items.slice().sort(function(a,b){return (a.done?1:0)-(b.done?1:0)}).forEach(function(it){
+      var li=document.createElement('li');if(it.done)li.className='done';
+      var t=document.createElement('button');t.className='tick';t.textContent='✓';t.setAttribute('aria-label',it.done?'কেনা বাতিল':'কেনা হয়েছে');
+      t.onclick=function(){toggle(it)};
+      var nm=document.createElement('div');nm.className='nm';
+      var b=document.createElement('b');b.textContent=it.name;nm.appendChild(b);
+      if(it.qty){var q=document.createElement('span');q.textContent=it.qty;nm.appendChild(q)}
+      li.appendChild(t);li.appendChild(nm);
+      if(it.done&&it.price!=null){
+        var pr=document.createElement('button');pr.className='price';pr.textContent=money(it.price);pr.title='দাম বদলান';
+        pr.onclick=function(){askPrice(it,true)};li.appendChild(pr);
+      }
+      var d=document.createElement('button');d.className='del';d.textContent='✕';d.setAttribute('aria-label','মুছুন');
+      d.onclick=function(){removeItem(it)};
+      li.appendChild(d);
+      var sw=document.createElement('div');sw.className='sw';
+      var h=document.createElement('span');h.className='swh';h.textContent='🗑 মুছুন';
+      var inf=document.createElement('div');inf.className='swi';inf.innerHTML='<b></b><span></span>';
+      var dt=new Date(it.created||Math.floor(it.id));
+      inf.firstChild.textContent=dt.toLocaleDateString('bn-BD',{weekday:'long'});
+      inf.lastChild.textContent=dt.toLocaleDateString('bn-BD',{day:'numeric',month:'long'});
+      sw.appendChild(inf);
+      if(!it.done){var dn=document.createElement('div');dn.className='swd';dn.textContent='✓ কেনা হয়েছে';sw.appendChild(dn)}
+      sw.appendChild(h);sw.appendChild(li);ul.appendChild(sw);
+      swipe(li,sw,function(){removeItem(it)},it.done?null:function(){askPrice(it,false)});
+    });
+  }
+
+  var trash=[],tt=null,OPEN=170;
+  function removeItem(it){
+    var idx=S.items.indexOf(it);if(idx<0)return;
+    S.items.splice(idx,1);trash.push({it:it,idx:idx});S.del.unshift({it:it,ts:Date.now()});if(S.del.length>300)S.del.length=300;save();render();
+    toast('“'+it.name+'” মুছে ফেলা হয়েছে');
+  }
+  function toast(msg){
+    var t=$('toast');t.innerHTML='<span></span><button>ফিরিয়ে আনুন</button>';
+    t.firstChild.textContent=msg;t.style.display='flex';t.lastChild.onclick=undo;
+    clearTimeout(tt);tt=setTimeout(function(){t.style.display='none';trash=[]},6000);
+  }
+  function undo(){
+    var r=trash.pop();if(!r)return;
+    S.items.splice(Math.min(r.idx,S.items.length),0,r.it);S.del=S.del.filter(function(d){return d.it!==r.it});save();render();
+    if(trash.length){toast('আরও '+bn(trash.length)+' টি ফিরিয়ে আনা যাবে')}
+    else{clearTimeout(tt);$('toast').style.display='none'}
+  }
+
+  function swipe(el,sw,onDel,onDone){
+    var sx=0,sy=0,dx=0,base=0,mode=0,id=null,blk=false,open=false,tm=null;
+    function bg(v){sw.style.background=v>0?'var(--green)':v<0?'var(--red)':''}
+    function closeIt(){clearTimeout(tm);open=false;sw.classList.remove('full');el.style.transition='transform .2s';el.style.transform='';setTimeout(function(){if(!open)bg(0)},220)}
+    el.addEventListener('click',function(ev){if(blk||open){ev.stopPropagation();ev.preventDefault();if(open&&!blk)closeIt()}},true);
+    el.addEventListener('pointerdown',function(e){clearTimeout(tm);sx=e.clientX;sy=e.clientY;base=open?OPEN:0;dx=base;mode=0;id=e.pointerId});
+    el.addEventListener('pointermove',function(e){
+      if(e.pointerId!==id)return;
+      var x=e.clientX-sx,y=e.clientY-sy;
+      if(mode===0){
+        if(Math.abs(x)>8&&Math.abs(x)>Math.abs(y)){mode=1;try{el.setPointerCapture(id)}catch(_){}el.style.transition='none'}
+        else if(Math.abs(y)>8){mode=2}
+      }
+      if(mode===1){dx=Math.min(onDone?el.offsetWidth:OPEN+20,base+x);bg(dx);sw.classList.toggle('full',!!onDone&&dx>el.offsetWidth*0.6);el.style.transform='translateX('+dx+'px)'}
+    });
+    function end(e){
+      if(e.pointerId!==id)return;
+      id=null;
+      if(mode!==1)return;
+      blk=true;setTimeout(function(){blk=false},120);
+      el.style.transition='transform .2s';
+      if(dx<-el.offsetWidth*0.35){el.style.transform='translateX(-110%)';setTimeout(onDel,190)}
+      else if(onDone&&dx>el.offsetWidth*0.6){closeIt();onDone()}
+      else if(dx>60){open=true;el.style.transform='translateX('+OPEN+'px)';tm=setTimeout(closeIt,3500)}
+      else{closeIt()}
+    }
+    el.addEventListener('pointerup',end);
+    el.addEventListener('pointercancel',end);
+  }
+
+  function sheet(html,onOpen){
+    if($('accountBox')&&$('sheet').contains($('accountBox'))) $('settingsHome').appendChild($('accountBox'));
+    $('sheet').innerHTML=html;$('ov').classList.add('on');if(onOpen)onOpen()
+  }
+  function close(){$('ov').classList.remove('on')}
+  var deferredInstallPrompt=null;
+  function updateInstallUI(){var b=$('installAppBtn'),m=$('installAppNote');if(!b||!m)return;var standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='অ্যাপ ইনস্টল করা আছে';b.disabled=true;m.textContent='আপনি অ্যাপ হিসেবে ব্যবহার করছেন।'}else if(deferredInstallPrompt){b.textContent='অ্যাপ ইনস্টল করুন';b.disabled=false;m.textContent='Chrome-এর মাধ্যমে ফোনে অ্যাপটি ইনস্টল করুন।'}else{b.textContent='ইনস্টল অপশন দেখুন';b.disabled=true;m.textContent='Chrome মেনু (⋮) থেকে “Install app” বা “Add to Home screen” নির্বাচন করুন।'} }
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredInstallPrompt=e;updateInstallUI()});
+  window.addEventListener('appinstalled',function(){deferredInstallPrompt=null;updateInstallUI()});
+  $('settingsBtn').onclick=function(){
+    sheet('<h3>সেটিংস</h3><p>অ্যাকাউন্ট ও অ্যাপের পছন্দ পরিবর্তন করুন।</p><div class="settings-section"><h4>Google Account</h4><p>Google Drive-এ আপনার বাজারের হিসাব ব্যাকআপ ও সিঙ্ক করুন।</p><div id="accountSlot"></div></div><div class="settings-section"><h4>ডার্ক মোড</h4><p>System settings নির্বাচন করলে ফোন বা কম্পিউটারের থিম অনুসরণ করবে।</p><select id="themeMode"><option value="system">System settings অনুযায়ী</option><option value="light">Light mode</option><option value="dark">Dark mode</option></select></div><div class="settings-section"><h4>অ্যাপ ইনস্টল</h4><p id="installAppNote">Chrome থেকে এই অ্যাপটি ফোনে ইনস্টল করুন।</p><button id="installAppBtn" type="button" style="width:100%;font:inherit;font-weight:600;border:0;border-radius:12px;padding:12px;background:var(--green);color:var(--on-green)">অ্যাপ ইনস্টল করুন</button></div><div class="btns"><button class="ok" id="settingsClose">বন্ধ করুন</button></div>',function(){
+      $('accountSlot').appendChild($('accountBox'));
+      $('themeMode').value=(function(){try{return localStorage.getItem(THEME_KEY)||'system'}catch(e){return 'system'}})();
+      $('themeMode').onchange=function(){applyTheme(this.value)};
+      $('settingsClose').onclick=close;
+      updateInstallUI();
+      $('installAppBtn').onclick=async function(){if(!deferredInstallPrompt)return;deferredInstallPrompt.prompt();try{await deferredInstallPrompt.userChoice}catch(e){}deferredInstallPrompt=null;updateInstallUI()};
+    });
+  };
+  $('ov').addEventListener('click',function(e){if(e.target===this)close()});
+
+  function ask(title,sub,init,cb){
+    sheet('<h3></h3><p></p><input id="aval" inputmode="decimal" autocomplete="off" placeholder="৳"><div class="btns"><button id="no">বাতিল</button><button class="ok" id="yes">ঠিক আছে</button></div>',function(){
+      var s=$('sheet');s.querySelector('h3').textContent=title;s.querySelector('p').textContent=sub;
+      var inp=$('aval');if(init!=null)inp.value=init;
+      setTimeout(function(){inp.focus();inp.select()},50);
+      function go(){var v=parse(inp.value);if(v===null||v<0){inp.style.borderColor='var(--red)';return}close();cb(v)}
+      $('yes').onclick=go;$('no').onclick=close;
+      inp.onkeydown=function(e){if(e.key==='Enter')go()};
+    });
+  }
+  function askPrice(it,edit){
+    ask(it.name+(it.qty?' ('+it.qty+')':''),'এর দাম কত পড়েছে?',edit?it.price:null,function(v){it.done=true;it.price=v;save();render()});
+  }
+  function toggle(it){
+    if(it.done){it.done=false;it.price=null;save();render()}else askPrice(it,false);
+  }
+
+  function add(){
+    var n=$('name').value.trim();if(!n){$('name').focus();return}
+    S.items.push({id:Date.now()+Math.random(),created:Date.now(),name:n,qty:'',done:false,price:null});
+    $('name').value='';$('name').focus();save();render();
+  }
+  $('addForm').onsubmit=function(e){e.preventDefault();add()};
+  
+
+  $('editBal').onclick=function(){
+    ask('মা কত টাকা দিয়েছেন?','এটাই আপনার মূল ব্যালেন্স',S.balance||null,function(v){S.balance=v;save();render()});
+  };
+  $('newTrip').onclick=function(){
+    sheet('<h3>নতুন বাজার শুরু করবেন?</h3><p>এখনকার বাজার ইতিহাসে জমা থাকবে, লিস্ট ও ব্যালেন্স খালি হয়ে যাবে।</p><div class="btns"><button id="no">না</button><button class="ok" id="yes">হ্যাঁ, শুরু করুন</button></div>',function(){
+      $('no').onclick=close;$('yes').onclick=function(){if(S.items.length){S.hist.unshift({id:Date.now(),ts:Date.now(),balance:S.balance,items:S.items})}S={balance:0,items:[],hist:S.hist,del:S.del};trash=[];$('toast').style.display='none';save();render();close();$('editBal').click()};
+    });
+  };
+
+  function report(){
+    var sp=spent(),rem=S.balance-sp,L=['বাজারের হিসাব','—————————'];
+    var bought=S.items.filter(function(i){return i.done}),left=S.items.filter(function(i){return !i.done});
+    bought.forEach(function(i,k){L.push(bn(k+1)+'. '+i.name+(i.qty?' ('+i.qty+')':'')+' — '+money(i.price))});
+    if(left.length){L.push('','কেনা হয়নি: '+left.map(function(i){return i.name}).join(', '))}
+    L.push('—————————','মায়ের দেওয়া: '+money(S.balance),'মোট খরচ: '+money(sp),(rem<0?'বেশি খরচ: ':'ফেরত: ')+money(Math.abs(rem)));
+    return L.join('\n');
+  }
+  $('sumBtn').onclick=function(){
+    var txt=report();
+    sheet('<h3>মায়ের জন্য হিসাব</h3><p>কপি করে মেসেজে পাঠাতে পারেন।</p><textarea id="rt" readonly></textarea><div class="btns"><button id="no">বন্ধ</button><button class="ok" id="cp">কপি করুন</button></div>',function(){
+      $('rt').value=txt;$('no').onclick=close;
+      $('cp').onclick=function(){
+        var done=function(){$('cp').textContent='কপি হয়েছে ✓'};
+        try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fb);return}}catch(e){}
+        fb();
+        function fb(){try{$('rt').select();document.execCommand('copy');done()}catch(e){$('cp').textContent='লেখা চেপে ধরে কপি করুন'}}
+      };
+    });
+  };
+
+  render();
+  // Register the PWA service worker (requires HTTPS, e.g. GitHub Pages).
+  if('serviceWorker' in navigator && location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(err){console.warn('Service worker registration failed:',err)})})}
+  // Google Drive connection is initialized when the user taps the connect button.
+  function dstr(t){return new Date(t).toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'})}
+  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+  function showHist(tab){
+    sheet('<h3>ইতিহাস</h3><div class="tabs"><button id="t1"></button><button id="t2"></button></div><div id="hb"></div><div class="btns"><button id="no">বন্ধ</button></div>',function(){
+      $('no').onclick=close;
+      $('t1').textContent='শেষ হওয়া বাজার ('+bn(S.hist.length)+')';
+      $('t2').textContent='মুছে ফেলা ('+bn(S.del.length)+')';
+      $('t1').className=tab===2?'':'on';$('t2').className=tab===2?'on':'';
+      $('t1').onclick=function(){showHist(1)};$('t2').onclick=function(){showHist(2)};
+      var hb=$('hb');
+      if(tab===2){
+        if(!S.del.length)hb.appendChild(el('div','hempty','মুছে ফেলা কিছু নেই।'));
+        S.del.forEach(function(d){
+          var it=d.it,c=el('div','hc');
+          c.appendChild(el('div','nx',it.name+(it.qty?' ('+it.qty+')':'')));
+          c.appendChild(el('div','sm',(it.done&&it.price!=null?money(it.price)+' • ':'')+'মুছেছেন: '+dstr(d.ts)));
+          var rs=el('button','rs','ফিরিয়ে আনুন');
+          rs.onclick=function(){S.del=S.del.filter(function(x){return x!==d});S.items.push(it);save();render();showHist(2)};
+          c.appendChild(rs);hb.appendChild(c);
+        });
+      }else{
+        if(!S.hist.length)hb.appendChild(el('div','hempty','এখনো কোনো শেষ হওয়া বাজার নেই। “নতুন বাজার শুরু” চাপলে আগের বাজার এখানে জমা হবে।'));
+        S.hist.forEach(function(h){
+          var sp=h.items.reduce(function(a,i){return a+(i.done&&i.price?i.price:0)},0),rem=h.balance-sp;
+          var d0=h.items.reduce(function(a,i){return Math.min(a,i.created||h.ts)},h.ts);
+          var c=el('details','hc'),s=el('summary'),l=el('span');
+          l.appendChild(document.createTextNode(dstr(d0)));l.appendChild(el('small',null,bn(h.items.length)+' টি জিনিস'));
+          s.appendChild(l);s.appendChild(el('span',null,money(sp)));c.appendChild(s);
+          h.items.forEach(function(i){
+            var r=el('div','ln'+(i.done?'':' nb'));
+            r.appendChild(el('span',null,i.name+(i.qty?' ('+i.qty+')':'')));
+            r.appendChild(el('span',null,i.done?money(i.price):'কেনা হয়নি'));
+            c.appendChild(r);
+          });
+          c.appendChild(el('div','sm','মায়ের দেওয়া: '+money(h.balance)+' • '+(rem<0?'বেশি খরচ: ':'ফেরত: ')+money(Math.abs(rem))));
+          hb.appendChild(c);
+        });
+      }
+    });
+  }
+  $('histBtn').onclick=function(){showHist(1)};
+
+  var armed=false,exitT=0,ht=null;
+  function arm(){if(armed)return;armed=true;try{history.pushState({g:1},'')}catch(e){}}
+  ['click','keydown','touchend','pointerup'].forEach(function(ev){document.addEventListener(ev,arm,{once:true})});
+  window.addEventListener('popstate',function(){
+    if(!armed)return;
+    if($('ov').classList.contains('on')){close();try{history.pushState({g:1},'')}catch(e){}return}
+    if(Date.now()-exitT<2000){armed=false;history.back();return}
+    exitT=Date.now();
+    var h=$('hint');h.textContent='বের হতে আবার ব্যাক চাপুন';h.style.display='flex';
+    clearTimeout(ht);ht=setTimeout(function(){h.style.display='none'},2000);
+    try{history.pushState({g:1},'')}catch(e){}
+  });
+
+  if(!S.balance&&!S.items.length){setTimeout(function(){$('editBal').click()},300)}
+})();
+</script>
+</body>
+</html>
